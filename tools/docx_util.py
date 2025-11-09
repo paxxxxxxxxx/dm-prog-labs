@@ -254,6 +254,23 @@ def add_table(doc, anchor, header: list, rows: list, widths_cm: list,
     return table
 
 
+def fill_header_card(table, values: dict) -> dict:
+    """填首页那张「实验名称 / 班级 / 姓名 / 学号 / 日期」抬头表。
+
+    表格是两列一组的 标签|值 结构（部分行有合并单元格），所以按标签文字定位右邻单元格，
+    比写死行列号稳。values 里没出现的标签保持原样。
+    """
+    filled = {}
+    for row in table.rows:
+        cells = row.cells
+        for i in range(0, len(cells) - 1, 2):
+            label = cells[i].text.strip()
+            if label in values:
+                set_cell(cells[i + 1], str(values[label]), size=10.5)
+                filled[label] = values[label]
+    return filled
+
+
 def find_paragraph(doc, needle: str) -> Paragraph | None:
     for p in doc.paragraphs:
         if needle in p.text:

@@ -54,6 +54,13 @@ def pct(scheme: dict, key: str) -> str:
 # ---------------------------------------------------------------------------
 # 一、实验目的
 # ---------------------------------------------------------------------------
+STUDENT = {
+    "班级": "数媒1班",
+    "姓名": "刘纯",
+    "学号": "2025310570",
+    "日期": "2026.11.9",
+}
+
 GOALS = [
     "① 能从「Strata Qwen3.8 Flash 128B（INT4）长文对话 + MiniMax H3 视频生成」这两个需求"
     f"倒推出显存 / 内存 / 带宽门槛：权重 64 GB、32K 上下文 KV cache {KV_GB:.2f} GB、"
@@ -224,6 +231,7 @@ def main() -> int:
     doc = Document(TPL)
     U.drop_page_breaks(doc)
     t0, t1, t2, t3, t4, t5, t6, t7 = doc.tables[:8]
+    U.fill_header_card(t0, STUDENT)
 
     # ---- 一、实验目的：模板给 2 行，补 1 行 ----
     while len(t1.rows) < len(GOALS):
