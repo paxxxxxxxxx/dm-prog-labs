@@ -1,0 +1,4 @@
+﻿scheme,name,vram_gb,ram_gb,vram_weights_gb,ram_weights_gb,tok_s,h3_seconds,total_cny,cny_per_tok_s,tok_s_per_wan
+A,"方案 A：32GB 单卡 + 128GB DDR5（指南给定）",32,128,26.24,37.76,2.055,436,84300,41022,0.244
+B,"方案 B：双卡 64GB + 64GB DDR5",64,64,58.24,5.76,9.571,436,134100,14010,0.714
+C,"方案 C：128GB 统一内存迷你主机（Ryzen AI Max+ Pro 495）",96,128,0.00,69.76,3.914,1524,26600,6797,1.471
