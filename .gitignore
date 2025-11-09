@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# 临时输出
+out.txt
+err.txt
+*.tmp
+~$*
+
+# 预览图（渲染 PDF 时生成的临时目录）
+.dsh-office-*/
+preview*/
