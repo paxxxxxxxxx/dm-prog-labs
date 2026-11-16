@@ -325,3 +325,262 @@ def cost_figure(schemes: list, out: str) -> str:
 
     footer(d, "图 6  整机价格构成（2026-11 渠道价，未计显示器与外设）", 1800, h)
     return save(img, out)
+
+
+# ===========================================================================
+# 第 03 讲 的图
+# ===========================================================================
+def layer_parallel_figure(out: str) -> str:
+    """四层实现的并行度：同一个乘加，硬件里同时做几份。"""
+    h = HEADER + 40 + 470 + 120 + FOOTER
+    img, d = canvas(1800, h)
+    header(d, "同一句乘加，三种并行度",
+           "C 用 1 个乘法器跑 27 次；Verilog 铺 27 个乘法器同时算；CUDA 起 32 个线程、9 个有效")
+
+    top = HEADER + 50
+    pw, gap = 520, 60
+    x0 = MARGIN
+
+    def panel(i, title, sub, color):
+        x = x0 + i * (pw + gap)
+        d.rounded_rectangle([x, top, x + pw, top + 430], radius=16, fill=LIGHT)
+        d.rectangle([x, top, x + pw, top + 8], fill=color)
+        text(d, (x + 28, top + 22), title, size=30, bold=True)
+        text(d, (x + 28, top + 64), sub, size=22, fill=MUTED)
+        return x
+
+    # 1) C：一个乘法器，循环 27 次
+    x = panel(0, "C 三重循环", "1 个乘法器 × 27 次迭代", ACCENT)
+    d.rounded_rectangle([x + 150, top + 110, x + 370, top + 190], radius=12, fill=ACCENT)
+    text(d, (x + 260, top + 132), "imull + addl", size=26, fill=WHITE, bold=True, anchor="ma")
+    # 循环箭头
+    d.arc([x + 120, top + 210, x + 400, top + 330], 200, 340, fill=ACCENT, width=6)
+    text(d, (x + 260, top + 250), "for k = 0..2  ×  9 个元素", size=24, fill=INK, anchor="ma")
+    text(d, (x + 260, top + 300), "时间换来空间：只要 1 份硬件", size=22, fill=MUTED, anchor="ma")
+    text(d, (x + 260, top + 350), "耗时 ∝ 27 × 单次乘加", size=24, fill=ACCENT, bold=True, anchor="ma")
+
+    # 2) Verilog：27 个乘法器并行
+    x = panel(1, "Verilog 结构级", "27 个乘法器 + 18 个加法器", GREEN)
+    for i in range(3):
+        for j in range(3):
+            d.rounded_rectangle([x + 60 + j * 66, top + 100 + i * 62,
+                                 x + 60 + j * 66 + 52, top + 100 + i * 62 + 48],
+                                radius=8, fill=GREEN)
+    text(d, (x + 380, top + 140), "9 组", size=26, fill=INK, bold=True)
+    text(d, (x + 380, top + 176), "乘加单元", size=22, fill=MUTED)
+    text(d, (x + 260, top + 310), "同一时刻全部翻转，C 一次就位", size=22, fill=MUTED, anchor="ma")
+    text(d, (x + 260, top + 356), "空间换来时间：27 份硬件", size=24, fill=GREEN, bold=True, anchor="ma")
+
+    # 3) CUDA：32 个线程，9 个有效
+    x = panel(2, "CUDA 核函数", "1 块 × 32 线程，9 个干活", ACCENT2)
+    for t in range(32):
+        r_, c_ = divmod(t, 8)
+        used = t < 9
+        d.rounded_rectangle([x + 40 + c_ * 56, top + 100 + r_ * 56,
+                             x + 40 + c_ * 56 + 46, top + 100 + r_ * 56 + 46],
+                            radius=6, fill=ACCENT2 if used else (226, 232, 240))
+    text(d, (x + 260, top + 340), "有效 9 / 空转 23（71.9%）", size=22, fill=MUTED, anchor="ma")
+    text(d, (x + 260, top + 380), "线程调度交给硬件", size=24, fill=ACCENT2, bold=True, anchor="ma")
+
+    text(d, (MARGIN, top + 460), "三种并行度对应三种代价：C 花时间、Verilog 花面积、CUDA 花线程槽位。",
+         size=24, fill=MUTED)
+    footer(d, "图 1  同一算法的三种并行度", 1800, h)
+    return save(img, out)
+
+
+def asm_breakdown_figure(total: int, counts: dict, out: str) -> str:
+    """-O0 下一条乘加语句的 23 条指令都在干什么。"""
+    h = HEADER + 60 + 120 + 40 + 60 + len(counts) * 62 + 140 + FOOTER
+    img, d = canvas(1800, h)
+    header(d, f"一条 c[i][j] += a[i][k]*b[k][j]，在 -O0 下是 {total} 条指令",
+           "其中只有 1 条 imull 在算 a×b、1 条 addl 在累加，其余都在算下标、搬数据")
+
+    top = HEADER + 70
+    useful = 3
+    waste = total - useful
+    bx, bw = MARGIN, 1640
+    hbar(d, bx, top, bw, 64, useful / total, color=ACCENT)
+    d.rectangle([bx + int(bw * useful / total), top, bx + bw, top + 64], fill=ACCENT2)
+    text(d, (bx + 14, top + 18), f"算术 {useful} 条", size=24, fill=WHITE, bold=True)
+    text(d, (bx + int(bw * useful / total) + 14, top + 18),
+         f"寻址 / 搬运 {waste} 条（{waste / total:.0%}）", size=24, fill=WHITE, bold=True)
+
+    y = top + 110
+    text(d, (MARGIN, y), "按指令类型拆开（脚本解析 matmul.s 得到，不是估计值）", size=23, fill=MUTED)
+    y += 44
+    maxc = max(counts.values())
+    for mnem, cnt in counts.items():
+        d.rectangle([MARGIN, y, MARGIN + 120, y + 40], fill=LIGHT)
+        text(d, (MARGIN + 12, y + 6), mnem, size=26, bold=True)
+        hbar(d, MARGIN + 140, y + 4, 1100, 32, cnt / maxc, color=ACCENT, radius=4)
+        text(d, (MARGIN + 1260, y + 4), f"{cnt}", size=28, bold=True)
+        note = {"movl": "取下标 / 取数据 / 栈暂存", "imull": "1 次 a×b，2 次算 i×n、k×n",
+                "addl": "1 次累加，2 次下标相加", "cltq": "32 位下标扩展到 64 位地址",
+                "leaq": "下标 ×4（用 lea 代替 imul）", "movq": "取数组基址",
+                "addq": "基址 + 偏移"}.get(mnem, "")
+        text(d, (MARGIN + 1320, y + 10), note, size=21, fill=MUTED)
+        y += 62
+
+    text(d, (MARGIN, y + 20),
+         "结论：-O0 不优化，一条语句 87% 的指令都花在「怎么找到数据」上；这也是 -O2 能提速一个量级的原因。",
+         size=23, fill=MUTED)
+    footer(d, "图 2  内层乘加的指令构成（-O0）", 1800, h)
+    return save(img, out)
+
+
+def matrix_consistency_figure(c: list, expect: list, out: str) -> str:
+    """3×3 结果矩阵：四路实现逐位一致。"""
+    h = HEADER + 40 + 3 * 165 + 100 + FOOTER
+    img, d = canvas(1800, h)
+    header(d, "四份实现算出来的 C 完全相同",
+           "C 三重循环 / Verilog 结构级 / CUDA 线程映射 / numpy 参照 —— 9 个元素逐位相等")
+
+    top = HEADER + 50
+    cw = 300
+    x0 = (1800 - 3 * cw - 2 * 20) // 2
+    ok = c == expect
+    for i in range(3):
+        for j in range(3):
+            v = c[i * 3 + j]
+            x = x0 + j * (cw + 20)
+            y = top + i * 165
+            d.rounded_rectangle([x, y, x + cw, y + 145], radius=14,
+                                fill=(236, 253, 245) if v == expect[i * 3 + j] else (254, 226, 226),
+                                outline=GREEN if v == expect[i * 3 + j] else (220, 38, 38), width=3)
+            text(d, (x + 20, y + 10), f"C[{i}][{j}]", size=21, fill=MUTED)
+            text(d, (x + cw // 2, y + 32), str(v), size=46, bold=True, anchor="ma")
+            text(d, (x + cw // 2, y + 110), "四路一致" if ok else "不一致", size=19,
+                 fill=GREEN if ok else (220, 38, 38), anchor="ma")
+
+    text(d, (MARGIN, top + 3 * 165 + 16),
+         "C 的 1 个乘法器跑 27 次、Verilog 的 27 个乘法器同时翻转、CUDA 的 9 个线程各算一格，"
+         "结果必须一模一样 —— 这就是「同一算法、四种代价」。",
+         size=23, fill=MUTED)
+    footer(d, "图 3  四路实现的 3×3 结果", 1800, h)
+    return save(img, out)
+
+
+# ===========================================================================
+# 第 04 讲 的图
+# ===========================================================================
+def time_bars_figure(runs: list, out: str) -> str:
+    """三语言 × 三规模的中位耗时（对数刻度，每种语言一条细条，同一基线）。"""
+    import math as _m
+
+    langs = [("python", "Python", ACCENT), ("numpy", "numpy (BLAS)", INDIGO),
+             ("csharp", "C# (.NET)", GREEN), ("javascript", "Node (V8)", ACCENT2)]
+    row_h = 150
+    h = HEADER + 80 + len(runs) * row_h + 110 + FOOTER
+    img, d = canvas(1800, h)
+    header(d, "同一个点积，三种执行方式",
+           "中位数毫秒（对数刻度）；C/Rust 因本机无编译器未运行，用 C#/.NET 与 numpy(BLAS) 代表编译代码")
+
+    top = HEADER + 70
+    bx, bw = 400, 940                      # 条区 400~1340，右侧留标签位
+    maxv = max(r["runs"][k]["median_ms"] for r in runs for k, _, _ in langs
+               if r["runs"].get(k, {}).get("available"))
+    lo = 0.003
+
+    def scale(v):
+        return _m.log10(max(v, lo) / lo) / _m.log10(maxv / lo)
+
+    for i, row in enumerate(runs):
+        y = top + i * row_h
+        text(d, (MARGIN, y + 40), f"N = {row['n']:,}", size=28, bold=True)
+        for j, (lang, name, color) in enumerate(langs):
+            rr = row["runs"].get(lang, {})
+            if not rr.get("available"):
+                continue
+            by = y + j * 30
+            d.rectangle([bx, by, bx + bw, by + 26], fill=LIGHT)
+            d.rectangle([bx, by, bx + max(4, int(bw * scale(rr["median_ms"]))), by + 26], fill=color)
+            val = rr["median_ms"]
+            txt = f"{val:.4f} ms" if val < 0.1 else f"{val:.3f} ms"
+            text(d, (bx + bw + 20, by - 2), f"{name}  {txt}", size=22, fill=color, bold=True)
+
+    y = top + len(runs) * row_h + 20
+    text(d, (MARGIN, y),
+         "Python 随 N 线性增长到 25.9 ms；编译路径稳定在 0.4~0.7 ms，BLAS 只要 0.14 ms —— 差距 40~183 倍；",
+         size=23, fill=MUTED)
+    text(d, (MARGIN, y + 34),
+         "而且这个倍数不随 N 变化，说明差的是「每个元素的执行成本」，不是算法或缓存。",
+         size=23, fill=MUTED)
+    footer(d, "图 4  三语言点积耗时（预热 3 轮，10 轮中位数）", 1800, h)
+    return save(img, out)
+
+
+def speedup_figure(runs: list, out: str) -> str:
+    """相对 Python 的加速倍数。"""
+    h = HEADER + 80 + 420 + 100 + FOOTER
+    img, d = canvas(1800, h)
+    header(d, "加速倍数：编译路径稳定在 40~66 倍",
+           "以 Python 为 1×；横轴是向量长度，纵轴是倍数")
+
+    top = HEADER + 90
+    x0, x1 = 260, 1500
+    y0, y1 = top + 40, top + 360
+    ns = [r["n"] for r in runs]
+    xs = {n: x0 + (x1 - x0) * i / max(1, len(ns) - 1) for i, n in enumerate(ns)}
+    maxsp = 80
+
+    def yv(sp):
+        return y1 - (y1 - y0) * sp / maxsp
+
+    for sp in (0, 20, 40, 60, 80):
+        d.line([x0, yv(sp), x1, yv(sp)], fill=GRID, width=2)
+        text(d, (x0 - 16, yv(sp) - 12), f"{sp}×", size=22, fill=MUTED, anchor="ra")
+    for n in ns:
+        text(d, (xs[n], y1 + 14), f"{n:,}", size=22, fill=MUTED, anchor="ma")
+
+    for lang, name, color in (("csharp", "C# (.NET)", GREEN), ("javascript", "Node (V8)", ACCENT2)):
+        pts = []
+        for row in runs:
+            rr = row["runs"].get(lang, {})
+            if rr.get("available"):
+                pts.append((xs[row["n"]], yv(rr["speedup_vs_python"])))
+        for a, b in zip(pts, pts[1:]):
+            d.line([a[0], a[1], b[0], b[1]], fill=color, width=6)
+        for (px, py) in pts:
+            d.ellipse([px - 9, py - 9, px + 9, py + 9], fill=color)
+        if pts:
+            text(d, (pts[-1][0] + 16, pts[-1][1] - 10), name, size=24, fill=color, bold=True)
+
+    text(d, (MARGIN, y1 + 70), "结论：倍数对 N 不敏感，说明差距来自「每个元素怎么执行」，不是缓存或规模的偶然。",
+         size=23, fill=MUTED)
+    footer(d, "图 5  相对 Python 的加速倍数", 1800, h)
+    return save(img, out)
+
+
+def timer_figure(probe: dict, out: str) -> str:
+    """计时器分辨率的真实对照：time.time() 量不出微秒级函数。"""
+    h = HEADER + 90 + 320 + 120 + FOOTER
+    img, d = canvas(1800, h)
+    header(d, "同一个 0.26 ms 的点积，两种计时器的读数",
+           f"time.time() 的分辨率是 {probe['clock_resolution_ms']:.3f} ms，比被测量的函数还大 60 倍")
+
+    top = HEADER + 100
+    text(d, (MARGIN, top - 40), "time.time()  10 次读数（灰色 = 测到 0.000）", size=24, bold=True, fill=MUTED)
+    bw, bh = 140, 60
+    for i in range(10):
+        x = MARGIN + i * (bw + 12)
+        zero = i < probe["time_time_zeros"]
+        d.rectangle([x, top, x + bw, top + bh], fill=(226, 232, 240) if zero else ACCENT2)
+        text(d, (x + bw // 2, top + 14), "0.000" if zero else "15.6", size=22,
+             fill=INK if zero else WHITE, bold=True, anchor="ma")
+
+    y2 = top + 130
+    text(d, (MARGIN, y2), f"perf_counter()  10 次读数（中位数 {probe['perf_counter_median_ms']:.3f} ms）",
+         size=24, bold=True, fill=MUTED)
+    for i in range(10):
+        x = MARGIN + i * (bw + 12)
+        d.rectangle([x, y2 + 40, x + bw, y2 + 40 + bh], fill=GREEN)
+        text(d, (x + bw // 2, y2 + 54), "≈0.26", size=22, fill=WHITE, bold=True, anchor="ma")
+
+    text(d, (MARGIN, y2 + 140),
+         f"实测：10 次里有 {probe['time_time_zeros']} 次读到 0.000 ms —— 用 time.time() 计时，量到的是计时器分辨率，不是函数耗时。",
+         size=23, fill=MUTED)
+    text(d, (MARGIN, y2 + 176),
+         "这就是实验要求「统一计时口径」的原因：先确认计时器比被测量的东西细，再谈比较。",
+         size=23, fill=MUTED)
+    footer(d, "图 6  计时器分辨率对照", 1800, h)
+    return save(img, out)

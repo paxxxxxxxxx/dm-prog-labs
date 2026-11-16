@@ -1,0 +1,289 @@
+{
+  "matrix": {
+    "A": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "B": [
+      9,
+      8,
+      7,
+      6,
+      5,
+      4,
+      3,
+      2,
+      1
+    ],
+    "expect": [
+      30,
+      24,
+      18,
+      84,
+      69,
+      54,
+      138,
+      114,
+      90
+    ]
+  },
+  "impl": {
+    "c": [
+      30,
+      24,
+      18,
+      84,
+      69,
+      54,
+      138,
+      114,
+      90
+    ],
+    "verilog": [
+      30,
+      24,
+      18,
+      84,
+      69,
+      54,
+      138,
+      114,
+      90
+    ],
+    "cuda": [
+      30,
+      24,
+      18,
+      84,
+      69,
+      54,
+      138,
+      114,
+      90
+    ],
+    "numpy": [
+      30,
+      24,
+      18,
+      84,
+      69,
+      54,
+      138,
+      114,
+      90
+    ]
+  },
+  "consistent": true,
+  "verilog": {
+    "products": [
+      [
+        [
+          9,
+          12,
+          9
+        ],
+        [
+          8,
+          10,
+          6
+        ],
+        [
+          7,
+          8,
+          3
+        ]
+      ],
+      [
+        [
+          36,
+          30,
+          18
+        ],
+        [
+          32,
+          25,
+          12
+        ],
+        [
+          28,
+          20,
+          6
+        ]
+      ],
+      [
+        [
+          63,
+          48,
+          27
+        ],
+        [
+          56,
+          40,
+          18
+        ],
+        [
+          49,
+          32,
+          9
+        ]
+      ]
+    ],
+    "accs": [
+      [
+        [
+          9,
+          21,
+          30
+        ],
+        [
+          8,
+          18,
+          24
+        ],
+        [
+          7,
+          15,
+          18
+        ]
+      ],
+      [
+        [
+          36,
+          66,
+          84
+        ],
+        [
+          32,
+          57,
+          69
+        ],
+        [
+          28,
+          48,
+          54
+        ]
+      ],
+      [
+        [
+          63,
+          111,
+          138
+        ],
+        [
+          56,
+          96,
+          114
+        ],
+        [
+          49,
+          81,
+          90
+        ]
+      ]
+    ],
+    "max_product": 63
+  },
+  "cuda": {
+    "blocks": 1,
+    "block_dim": 32,
+    "launched": 32,
+    "active": 9,
+    "idle": 23
+  },
+  "asm": {
+    "total": 23,
+    "counts": {
+      "movl": 9,
+      "imull": 3,
+      "addl": 3,
+      "cltq": 2,
+      "leaq": 2,
+      "movq": 2,
+      "addq": 2
+    }
+  },
+  "port": {
+    "cu_code_lines": 66,
+    "mu_code_lines": 66,
+    "minus": 17,
+    "plus": 17,
+    "changed": 17,
+    "pairs": [
+      {
+        "cu": "#include <cuda_runtime.h>",
+        "mu": "#include <musa_runtime.h>"
+      },
+      {
+        "cu": "#define CUDA_CHECK(call)                                                    \\",
+        "mu": "#define MUSA_CHECK(call)                                                    \\"
+      },
+      {
+        "cu": "cudaError_t err_ = (call);                                          \\",
+        "mu": "musaError_t err_ = (call);                                          \\"
+      },
+      {
+        "cu": "if (err_ != cudaSuccess) {                                          \\",
+        "mu": "if (err_ != musaSuccess) {                                          \\"
+      },
+      {
+        "cu": "printf(\"CUDA error %s at %s:%d\\n\",                              \\",
+        "mu": "printf(\"MUSA error %s at %s:%d\\n\",                              \\"
+      },
+      {
+        "cu": "cudaGetErrorString(err_), __FILE__, __LINE__);           \\",
+        "mu": "musaGetErrorString(err_), __FILE__, __LINE__);           \\"
+      },
+      {
+        "cu": "CUDA_CHECK(cudaMalloc(&d_a, bytes));",
+        "mu": "MUSA_CHECK(musaMalloc(&d_a, bytes));"
+      },
+      {
+        "cu": "CUDA_CHECK(cudaMalloc(&d_b, bytes));",
+        "mu": "MUSA_CHECK(musaMalloc(&d_b, bytes));"
+      },
+      {
+        "cu": "CUDA_CHECK(cudaMalloc(&d_c, bytes));",
+        "mu": "MUSA_CHECK(musaMalloc(&d_c, bytes));"
+      },
+      {
+        "cu": "CUDA_CHECK(cudaMemcpy(d_a, h_a, bytes, cudaMemcpyHostToDevice));",
+        "mu": "MUSA_CHECK(musaMemcpy(d_a, h_a, bytes, musaMemcpyHostToDevice));"
+      },
+      {
+        "cu": "CUDA_CHECK(cudaMemcpy(d_b, h_b, bytes, cudaMemcpyHostToDevice));",
+        "mu": "MUSA_CHECK(musaMemcpy(d_b, h_b, bytes, musaMemcpyHostToDevice));"
+      },
+      {
+        "cu": "CUDA_CHECK(cudaGetLastError());",
+        "mu": "MUSA_CHECK(musaGetLastError());"
+      },
+      {
+        "cu": "CUDA_CHECK(cudaDeviceSynchronize());",
+        "mu": "MUSA_CHECK(musaDeviceSynchronize());"
+      },
+      {
+        "cu": "CUDA_CHECK(cudaMemcpy(h_c, d_c, bytes, cudaMemcpyDeviceToHost));",
+        "mu": "MUSA_CHECK(musaMemcpy(h_c, d_c, bytes, musaMemcpyDeviceToHost));"
+      },
+      {
+        "cu": "cudaFree(d_a);",
+        "mu": "musaFree(d_a);"
+      },
+      {
+        "cu": "cudaFree(d_b);",
+        "mu": "musaFree(d_b);"
+      },
+      {
+        "cu": "cudaFree(d_c);",
+        "mu": "musaFree(d_c);"
+      }
+    ]
+  }
+}
