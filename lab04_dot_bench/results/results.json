@@ -1,0 +1,246 @@
+{
+  "sizes": [
+    10000,
+    100000,
+    1000000
+  ],
+  "runs": [
+    {
+      "n": 10000,
+      "runs": {
+        "python": {
+          "lang": "python",
+          "n": 10000,
+          "median_ms": 0.2528000040911138,
+          "min_ms": 0.2408000291325152,
+          "max_ms": 0.26000000070780516,
+          "value": 19.188725358477523,
+          "checksum": 249.45342966020775,
+          "samples_ms": [
+            0.2408000291325152,
+            0.26000000070780516,
+            0.2505999873392284,
+            0.2565999748185277,
+            0.2521999995224178,
+            0.2460000105202198,
+            0.25340000865980983,
+            0.25729998014867306,
+            0.24860003031790257,
+            0.25889999233186245
+          ],
+          "available": true,
+          "how": "python 3.12 解释执行（本机实测）",
+          "rel_err": 0.0,
+          "passed": true
+        },
+        "numpy": {
+          "lang": "numpy",
+          "n": 10000,
+          "available": true,
+          "how": "numpy.dot（底层 BLAS，编译代码）",
+          "median_ms": 0.0016999838408082724,
+          "min_ms": 0.0015999539755284786,
+          "value": 19.18872535847754,
+          "checksum": 249.45342966020803,
+          "rel_err": 9.25729461553558e-16,
+          "passed": true,
+          "speedup_vs_python": 148.7072982828577
+        },
+        "csharp": {
+          "lang": "csharp",
+          "n": 10000,
+          "available": true,
+          "how": "C# / .NET JIT（csc /optimize+ /unsafe，本机实测）",
+          "median_ms": 0.0042,
+          "min_ms": 0.0042,
+          "value": 19.188725358477523,
+          "checksum": 249.45342966020775,
+          "rel_err": 0.0,
+          "passed": true,
+          "speedup_vs_python": 60.19047716455091
+        },
+        "javascript": {
+          "lang": "javascript",
+          "n": 10000,
+          "available": true,
+          "how": "Node 24 / V8 JIT（本机实测）",
+          "median_ms": 0.017,
+          "min_ms": 0.0169,
+          "value": 19.188725358477523,
+          "checksum": 249.45342966020775,
+          "rel_err": 0.0,
+          "passed": true,
+          "speedup_vs_python": 14.87058847594787
+        }
+      }
+    },
+    {
+      "n": 100000,
+      "runs": {
+        "python": {
+          "lang": "python",
+          "n": 100000,
+          "median_ms": 2.671950001968071,
+          "min_ms": 2.40620004478842,
+          "max_ms": 2.9344999929890037,
+          "value": -27.263766684604896,
+          "checksum": -354.4289668998636,
+          "samples_ms": [
+            2.40620004478842,
+            2.492200001142919,
+            2.66100000590086,
+            2.7219000039622188,
+            2.9344999929890037,
+            2.682899998035282,
+            2.5991000002250075,
+            2.6349000399932265,
+            2.735799993388355,
+            2.723100013099611
+          ],
+          "available": true,
+          "how": "python 3.12 解释执行（本机实测）",
+          "rel_err": 0.0,
+          "passed": true
+        },
+        "numpy": {
+          "lang": "numpy",
+          "n": 100000,
+          "available": true,
+          "how": "numpy.dot（底层 BLAS，编译代码）",
+          "median_ms": 0.10815000860020518,
+          "min_ms": 0.09139999747276306,
+          "value": -27.263766684604818,
+          "checksum": -354.42896689986276,
+          "rel_err": 2.8667976012920354e-15,
+          "passed": true,
+          "speedup_vs_python": 24.705961992526383
+        },
+        "csharp": {
+          "lang": "csharp",
+          "n": 100000,
+          "available": true,
+          "how": "C# / .NET JIT（csc /optimize+ /unsafe，本机实测）",
+          "median_ms": 0.0459,
+          "min_ms": 0.0438,
+          "value": -27.263766684604896,
+          "checksum": -354.4289668998636,
+          "rel_err": 0.0,
+          "passed": true,
+          "speedup_vs_python": 58.21241834353095
+        },
+        "javascript": {
+          "lang": "javascript",
+          "n": 100000,
+          "available": true,
+          "how": "Node 24 / V8 JIT（本机实测）",
+          "median_ms": 0.06315,
+          "min_ms": 0.0629,
+          "value": -27.263766684604896,
+          "checksum": -354.4289668998636,
+          "rel_err": 0.0,
+          "passed": true,
+          "speedup_vs_python": 42.31116392665196
+        }
+      }
+    },
+    {
+      "n": 1000000,
+      "runs": {
+        "python": {
+          "lang": "python",
+          "n": 1000000,
+          "median_ms": 25.878049986204132,
+          "min_ms": 25.3798000048846,
+          "max_ms": 28.92110001994297,
+          "value": -185.05132369229088,
+          "checksum": -2405.667207999781,
+          "samples_ms": [
+            25.704999978188425,
+            26.105800003279,
+            25.3798000048846,
+            25.599999993573874,
+            25.708200002554804,
+            28.92110001994297,
+            26.04789996985346,
+            26.574899966362864,
+            26.257699995767325,
+            25.680199963971972
+          ],
+          "available": true,
+          "how": "python 3.12 解释执行（本机实测）",
+          "rel_err": 0.0,
+          "passed": true
+        },
+        "numpy": {
+          "lang": "numpy",
+          "n": 1000000,
+          "available": true,
+          "how": "numpy.dot（底层 BLAS，编译代码）",
+          "median_ms": 0.14150000060908496,
+          "min_ms": 0.11100003030151129,
+          "value": -185.0513236922822,
+          "checksum": -2405.667207999669,
+          "rel_err": 4.6844417015290723e-14,
+          "passed": true,
+          "speedup_vs_python": 182.8837446983208
+        },
+        "csharp": {
+          "lang": "csharp",
+          "n": 1000000,
+          "available": true,
+          "how": "C# / .NET JIT（csc /optimize+ /unsafe，本机实测）",
+          "median_ms": 0.42095,
+          "min_ms": 0.3867,
+          "value": -185.05132369229088,
+          "checksum": -2405.667207999781,
+          "rel_err": 0.0,
+          "passed": true,
+          "speedup_vs_python": 61.475353334610126
+        },
+        "javascript": {
+          "lang": "javascript",
+          "n": 1000000,
+          "available": true,
+          "how": "Node 24 / V8 JIT（本机实测）",
+          "median_ms": 0.65705,
+          "min_ms": 0.5988,
+          "value": -185.05132369229088,
+          "checksum": -2405.667207999781,
+          "rel_err": 0.0,
+          "passed": true,
+          "speedup_vs_python": 39.385206584284504
+        }
+      }
+    }
+  ],
+  "env": {
+    "csharp": {
+      "available": true,
+      "detail": "C:\\Users\\luv\\Desktop\\程序设计\\dm-prog-labs\\lab04_dot_bench\\build\\dot_cs.exe"
+    },
+    "c": {
+      "available": false,
+      "reason": "PATH 中没有 gcc（本机未安装任何 C 编译器，且沙箱不通外网）"
+    },
+    "rust": {
+      "available": false,
+      "reason": "PATH 中没有 rustc（本机未安装 Rust 工具链，且沙箱不通外网）"
+    },
+    "python": "3.12.14",
+    "node": "D:\\unitywork\\Tuanjie Cowork\\cli\\bin\\win32-x64\\node.EXE"
+  },
+  "timer_probe": {
+    "n": 10000,
+    "time_time_median_ms": 0.0,
+    "time_time_zeros": 6,
+    "perf_counter_median_ms": 0.26699999580159783,
+    "clock_resolution_ms": 15.625,
+    "pc_resolution_ms": 9.999999999999999e-05
+  },
+  "protocol": {
+    "warmup": 3,
+    "times": 10,
+    "statistic": "median",
+    "timer": "time.perf_counter / Stopwatch / Instant / performance.now"
+  }
+}

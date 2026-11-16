@@ -1,0 +1,34 @@
+{
+  "seed": 20261116,
+  "dtype": "float64",
+  "endian": "little",
+  "items": [
+    {
+      "n": 10000,
+      "a": "data\\a_f64_10000.bin",
+      "b": "data\\b_f64_10000.bin",
+      "bytes_each": 80000,
+      "sha256_a": "da64bdb7f793ee26bb113369e0b40e2b2c1ff2b2bd62933f1058bf8e4e4a4943",
+      "sha256_b": "8fa9c031956731d4b299d3eaf0c3e640c525f77b5fc9b7b85d88a721a0f9b31c",
+      "python_dot": 19.18872535847754
+    },
+    {
+      "n": 100000,
+      "a": "data\\a_f64_100000.bin",
+      "b": "data\\b_f64_100000.bin",
+      "bytes_each": 800000,
+      "sha256_a": "eaf23ab7c8f55405ea57661aa902f1413f1aa442f2f14f705585ec3baad053b9",
+      "sha256_b": "f10467e23913e1f16114eda4d5539c27656cbcc4497283f4ad4d34ccadc6ffb9",
+      "python_dot": -27.263766684604818
+    },
+    {
+      "n": 1000000,
+      "a": "data\\a_f64_1000000.bin",
+      "b": "data\\b_f64_1000000.bin",
+      "bytes_each": 8000000,
+      "sha256_a": "396951c9b5a996df85c88a03084063eff38c1f3bef51e462cfa76497bc3ca79c",
+      "sha256_b": "70b704bb6f0ca587ac3f8425210ec756db4d7eb465115d174e990ab6ca2fbe65",
+      "python_dot": -185.0513236922822
+    }
+  ]
+}
