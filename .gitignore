@@ -1,4 +1,4 @@
-# Python
+﻿# Python
 __pycache__/
 *.py[cod]
 
@@ -8,6 +8,11 @@ err.txt
 *.tmp
 ~$*
 
-# 预览图（渲染 PDF 时生成的临时目录）
+# 第 04 讲：数据可用 gen_data.py 重新生成（只提交 manifest.json）
+lab04_dot_bench/data/*.bin
+lab04_dot_bench/build/
+build/
+
+# 预览图
 .dsh-office-*/
 preview*/
