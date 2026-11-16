@@ -288,6 +288,9 @@ def main() -> int:
                           "本讲另附 matmul_tb.v 与 ref/results.md")
         p.runs[1].font.color.rgb = U.RGBColor.from_string(U.INK)
 
+    # 评分表只有 6 行，别让它被拆成「第 6 页半张 + 第 7 页一行」
+    U.keep_table_together(t7)
+
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     doc.save(OUT)
     print(f"[saved] {os.path.relpath(OUT, ROOT)}")

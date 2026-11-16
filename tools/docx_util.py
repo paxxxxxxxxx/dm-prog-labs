@@ -271,6 +271,18 @@ def fill_header_card(table, values: dict) -> dict:
     return filled
 
 
+def keep_table_together(table) -> None:
+    """让整张表不跨页：行内禁止拆分 + 除最后一行外都「与下段同页」。"""
+    for ri, row in enumerate(table.rows):
+        trPr = row._tr.get_or_add_trPr()
+        cant = OxmlElement("w:cantSplit")
+        trPr.append(cant)
+        if ri < len(table.rows) - 1:
+            for cell in row.cells:
+                for par in cell.paragraphs:
+                    par.paragraph_format.keep_with_next = True
+
+
 def find_paragraph(doc, needle: str) -> Paragraph | None:
     for p in doc.paragraphs:
         if needle in p.text:
