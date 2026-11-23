@@ -1,4 +1,4 @@
-﻿# Python
+# Python
 __pycache__/
 *.py[cod]
 
@@ -16,3 +16,8 @@ build/
 # 预览图
 .dsh-office-*/
 preview*/
+
+# 报告与插图只留在本地，不进仓库（仓库里只放代码、工具与结果数据）
+*/report/*.docx
+*/report/*.pdf
+*/report/figures/*.png
