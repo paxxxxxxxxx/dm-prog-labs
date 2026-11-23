@@ -1,0 +1,175 @@
+{
+  "ipconfig": {
+    "adapter": "Wireless LAN adapter WLAN",
+    "desc": "MediaTek Wi-Fi 7 MT7925 Wireless LAN Card",
+    "mac": "DC-56-7B-6F-36-B1",
+    "ipv4": "10.250.206.189",
+    "mask": "255.255.0.0",
+    "gateway_v4": "10.250.0.1",
+    "gateway_v6": "fe80::3e15:fbff:fea9:722f",
+    "dns": [
+      "10.248.98.30"
+    ],
+    "dhcp": "Yes",
+    "dhcp_server": "10.250.0.1",
+    "ipv6_linklocal": "fe80::d2b:953d:b024:9082",
+    "host": "LAPTOP-3HTFMKHB"
+  },
+  "gateway_mac": "3C-15-FB-A9-72-2F",
+  "eui64": {
+    "derived": "fe80::3e15:fbff:fea9:722f",
+    "actual": "fe80::3e15:fbff:fea9:722f",
+    "match": true
+  },
+  "ping": {
+    "回环": {
+      "target": "127.0.0.1",
+      "received": 0,
+      "loss_pct": 100,
+      "avg_ms": null,
+      "ttl": null,
+      "transmit_failed": true,
+      "raw_tail": "PING: transmit failed. 常见故障。 \nPING: transmit failed. 常见故障。 \n\nPing statistics for 127.0.0.1:\n    Packets: Sent = 2, Received = 0, Lost = 2 (100% loss),"
+    },
+    "网关": {
+      "target": "10.250.0.1",
+      "received": 0,
+      "loss_pct": 100,
+      "avg_ms": null,
+      "ttl": null,
+      "transmit_failed": true,
+      "raw_tail": "PING: transmit failed. 常见故障。 \nPING: transmit failed. 常见故障。 \n\nPing statistics for 10.250.0.1:\n    Packets: Sent = 2, Received = 0, Lost = 2 (100% loss),"
+    },
+    "公网 DNS": {
+      "target": "223.5.5.5",
+      "received": 0,
+      "loss_pct": 100,
+      "avg_ms": null,
+      "ttl": null,
+      "transmit_failed": true,
+      "raw_tail": "PING: transmit failed. 常见故障。 \nPING: transmit failed. 常见故障。 \n\nPing statistics for 223.5.5.5:\n    Packets: Sent = 2, Received = 0, Lost = 2 (100% loss),"
+    }
+  },
+  "tcp_probe": [
+    {
+      "target": "223.5.5.5:443",
+      "ok": true,
+      "ms": 40.2,
+      "peer": "223.5.5.5:443"
+    },
+    {
+      "target": "www.baidu.com:443",
+      "ok": true,
+      "ms": 45.7,
+      "peer": "157.148.69.186:443"
+    },
+    {
+      "target": "10.250.0.1:53",
+      "ok": false,
+      "ms": 2153.4,
+      "error": "[WinError 10061] 由于目标计算机积极拒绝，无法连接。"
+    }
+  ],
+  "nslookup": {
+    "www.baidu.com": {
+      "server": "10.248.98.30",
+      "name": "www.a.shifen.com",
+      "ipv4": [
+        "157.148.69.151",
+        "157.148.69.186"
+      ],
+      "ipv6": [
+        "2408:8756:c52:1a18:0:ff:b030:7606",
+        "2408:8756:c52:15df:0:ff:b073:d207"
+      ],
+      "raw": "Server:  UnKnown\r\nAddress:  10.248.98.30\r\n\r\nName:    www.a.shifen.com\r\nAddresses:  2408:8756:c52:1a18:0:ff:b030:7606\r\n\t  2408:8756:c52:15df:0:ff:b073:d207\r\n\t  157.148.69.151\r\n\t  157.148.69.186\r\nAliases:  www.baidu.com\r\n\r\nNon-authoritative answer:"
+    },
+    "github.com": {
+      "server": "10.248.98.30",
+      "name": "github.com",
+      "ipv4": [
+        "20.6.7.17"
+      ],
+      "ipv6": [],
+      "raw": "Server:  UnKnown\r\nAddress:  10.248.98.30\r\n\r\nName:    github.com\r\nAddress:  20.6.7.17\r\n\r\nNon-authoritative answer:"
+    }
+  },
+  "netstat": {
+    "tcp_total": 310,
+    "established": [
+      {
+        "local": "10.250.206.189:50158",
+        "foreign": "157.255.191.75:80",
+        "pid": "31936"
+      },
+      {
+        "local": "10.250.206.189:50756",
+        "foreign": "157.148.63.240:14000",
+        "pid": "25672"
+      },
+      {
+        "local": "10.250.206.189:52773",
+        "foreign": "157.148.63.107:443",
+        "pid": "9520"
+      },
+      {
+        "local": "10.250.206.189:53192",
+        "foreign": "52.110.15.97:443",
+        "pid": "12528"
+      },
+      {
+        "local": "10.250.206.189:53193",
+        "foreign": "40.99.9.114:443",
+        "pid": "12528"
+      },
+      {
+        "local": "10.250.206.189:53196",
+        "foreign": "40.99.52.130:443",
+        "pid": "12528"
+      },
+      {
+        "local": "10.250.206.189:53203",
+        "foreign": "157.148.63.92:443",
+        "pid": "41696"
+      },
+      {
+        "local": "10.250.206.189:53321",
+        "foreign": "113.240.74.16:443",
+        "pid": "18032"
+      }
+    ],
+    "listening_sample": [
+      {
+        "local": "0.0.0.0:135",
+        "pid": "2316"
+      },
+      {
+        "local": "0.0.0.0:445",
+        "pid": "4"
+      },
+      {
+        "local": "0.0.0.0:5040",
+        "pid": "14284"
+      },
+      {
+        "local": "0.0.0.0:6099",
+        "pid": "18032"
+      },
+      {
+        "local": "0.0.0.0:7680",
+        "pid": "29616"
+      },
+      {
+        "local": "0.0.0.0:49664",
+        "pid": "1132"
+      }
+    ],
+    "established_count": 55,
+    "listening_count": 55
+  },
+  "capture": {
+    "pktmon_rc": 5,
+    "pktmon_out": "鏃犳硶涓? PktMon 椹卞姩绋嬪簭閫氫俊銆傛嫆缁濊?块棶銆?",
+    "wireshark_installed": false
+  }
+}

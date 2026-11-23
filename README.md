@@ -1,6 +1,6 @@
-# 数字媒体程序设计 · 实验作业（第 01–04 讲）
+# 数字媒体程序设计 · 实验作业（第 01–05 讲）
 
-2026 秋《数字媒体程序设计》四讲实验的**全部代码 + 数据 + 报告**。
+2026 秋《数字媒体程序设计》五讲实验的**全部代码 + 数据 + 报告**。
 四个实验都是「先推导、再实现/验证、最后落到一张表或一段结论」，所以每个实验目录里
 都有**可运行的脚本**和**由脚本生成的报告**，报告里的每个数字都能在代码里找到出处。
 
@@ -19,6 +19,11 @@ dm-prog-labs/
 │  ├─ src/                        matmul.c / .s / .v / _tb.v / .cu / .mu 六份源码
 │  ├─ ref/ref_matmul.py           四路一致性核对 + 指令统计 + MUSA diff
 │  └─ report/                     报告 docx + pdf + 插图
+├─ lab05_network_layers/          第 05 讲：网络场景分层与协议标注
+│  ├─ scenarios.py                10 个场景的四层标注 + 六条规则自检
+│  ├─ verify.py                   ipconfig/arp/ping/nslookup/netstat 真实采集与解析
+│  ├─ packet.py                   构造并逐层解析一个 54 字节 TCP SYN
+│  └─ results/                    三份 JSON（场景表 / 验证记录 / 报文解析）
 ├─ lab04_dot_bench/               第 04 讲：Scaled Dot-Product 与 Python/C/Rust 效率对比
 │  ├─ bench/gen_data.py           三语言共用的二进制数据（同一种子、记 sha256）
 │  ├─ bench/dot.py .c .rs         三份实现（统一接口与 RESULT 输出）
@@ -59,9 +64,18 @@ python lab04_dot_bench/bench/bench.py --md lab04_dot_bench/results/results.md `
                                       --json lab04_dot_bench/results/results.json
 python lab04_dot_bench/bench/test_dot.py
 
+# 第 05 讲：场景标注自检 → 采集本机网络 → 解析报文
+python lab05_network_layers/scenarios.py --md lab05_network_layers/results/scenarios.md `
+                                         --csv lab05_network_layers/results/scenarios.csv `
+                                         --json lab05_network_layers/results/scenarios.json
+python lab05_network_layers/verify.py --md lab05_network_layers/results/verify.md `
+                                      --json lab05_network_layers/results/verify.json
+python lab05_network_layers/packet.py --json lab05_network_layers/results/packet.json
+
 # 重新生成插图、报告与 PDF
 python tools/make_figures.py
 python tools/make_figures_l34.py
+python tools/make_figures_l5.py
 python tools/build_lab1.py   # 同理 build_lab2/3/4.py
 python tools/export_pdf.py <输入.docx> <输出.pdf>
 ```
@@ -120,6 +134,24 @@ DDR5 上，单 token 就要 0.47 s，所以只有 2 tok/s。结论：预算 3 �
 
 **倍数几乎不随 N 变化**，说明差的是「每个元素花多少指令」，不是缓存或算法。
 
+**第 05 讲（网络分层）**
+
+10 个日常场景逐条落到四层（应用 / 传输 / 网络 / 链路），并用脚本按「常见问题」的六条规则自检：
+
+| 检查项 | 结果 |
+| --- | --- |
+| 四层齐全、应用层不写 TCP/UDP | 10/10 通过 |
+| 传输层写出协议 + 端口 | 10/10 通过 |
+| 场景覆盖 | TCP 9 个、UDP 4 个、应用层协议 9 种 |
+
+本机实测（真实执行 `ipconfig` / `arp` / `nslookup` / `netstat`）：
+IPv4 `10.250.206.189/16`、网关 `10.250.0.1`、DNS `10.248.98.30`、网卡 MAC `DC-56-7B-6F-36-B1`，
+网关 MAC `3C-15-FB-A9-72-2F` —— 而且网关的 IPv6 链路本地地址 `fe80::3e15:fbff:fea9:722f`
+正好是它的 MAC 按 EUI-64 推出来的（脚本做了反推验证）。
+
+一个真实的诊断结论：本机 `ping` 连 `127.0.0.1` 都 `transmit failed`（ICMP 出站被限制），
+但 TCP 连 `223.5.5.5:443` 只要 40 ms —— **ping 不通 ≠ 网不通**。
+
 ## 数据与口径
 
 - 第 02 讲价格取 **2026-11** 电商渠道价与公开报道；汇率按 1 美元 ≈ 7.2 元。
@@ -127,6 +159,8 @@ DDR5 上，单 token 就要 0.47 s，所以只有 2 tok/s。结论：预算 3 �
 - 第 04 讲的点积数据由 `gen_data.py` 生成（种子 20261116，[-1,1) 均匀分布），
   三语言读**同一份字节**，sha256 记在 `data/manifest.json`；计时统一「预热 3 轮 + 10 轮中位数、
   只计点积不含读文件、结果必须参与输出」。
+- 第 05 讲的报文是**用本机真实 MAC/IP/端口手工构造**的 54 字节 TCP SYN（校验和按 RFC 1071 计算并回验），
+  不是抓包结果 —— 本机 Wireshark 未安装、`pktmon` 需要管理员权限（返回码 5），报告里已明确标注。
 - 本机没有 gcc / rustc / iverilog / nvcc，且沙箱不通外网，所以：第 03 讲的 C/Verilog/CUDA
   交源码 + 编译命令，一致性用 Python 按各实现语义重算；第 04 讲的 C/Rust 同样只交源码，
   编译型路径的实测数据由 C#/.NET 与 numpy(BLAS) 代跑（报告里明确标注「代跑」）。

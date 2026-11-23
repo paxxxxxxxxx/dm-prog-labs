@@ -137,6 +137,7 @@ def add_picture(doc, anchor, path: str, width_cm: float = 16.0, space_after: flo
     p.paragraph_format.space_before = Pt(6)
     p.paragraph_format.space_after = Pt(space_after)
     p.paragraph_format.line_spacing = 1.0
+    p.paragraph_format.keep_with_next = True     # 图和题注不要被分页拆开
     p.add_run().add_picture(path, width=Cm(width_cm))
     return p
 

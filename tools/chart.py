@@ -584,3 +584,206 @@ def timer_figure(probe: dict, out: str) -> str:
          size=23, fill=MUTED)
     footer(d, "图 6  计时器分辨率对照", 1800, h)
     return save(img, out)
+
+# ===========================================================================
+# 第 05 讲 的图
+# ===========================================================================
+SEG = {
+    "frame_h": (148, 163, 184),    # 帧头（含帧尾）
+    "ip": (37, 99, 235),           # IP 头
+    "tcp": (5, 150, 105),          # TCP 头
+    "data": (253, 230, 138),       # 数据
+}
+
+
+def _bar(d, x, y, w, h, parts, show_text=True):
+    """画一根带分段的分层条。parts = [(比例, 颜色, 文字)]"""
+    cx = x
+    for frac, color, label in parts:
+        ww = int(w * frac)
+        if ww <= 0:
+            continue
+        d.rectangle([cx, y, cx + ww, y + h], fill=color,
+                    outline=WHITE, width=2)
+        if show_text and ww > 62:
+            text(d, (cx + ww // 2, y + h // 2 - 1), label, size=19 if h >= 60 else 17,
+                 fill=WHITE if color in (SEG["frame_h"], SEG["ip"], SEG["tcp"]) else INK,
+                 bold=True, anchor="mm")
+        cx += ww
+    return cx
+
+
+def encapsulation_figure(out: str) -> str:
+    """封装 / 解封装示意：发送端加头，接收端剥头，中间过交换机与路由器。"""
+    h = HEADER + 40 + 780 + 90 + FOOTER
+    img, d = canvas(1800, h)
+    header(d, "一次发消息：逐层加头，逐层剥头",
+           "发送端自上而下每层加一个头；接收端自下而上逐层剥掉 —— 每层只认并处理属于自己的那一段")
+
+    top = HEADER + 50
+    row_h, bar_h = 160, 76
+    A_x, A_w = 170, 450          # 发送端条区
+    C_x, C_w = 1130, 450         # 接收端条区
+    Bx = 700                     # 中间设备区
+
+    # 层与 PDU
+    rows = [
+        ("应用层", "报文 message", [(1.0, SEG["data"], "数据")]),
+        ("传输层", "段 segment", [(0.22, SEG["tcp"], "TCP 头"), (0.78, SEG["data"], "数据")]),
+        ("网络层", "数据报 packet", [(0.15, SEG["ip"], "IP 头"), (0.22, SEG["tcp"], "TCP 头"),
+                                    (0.63, SEG["data"], "数据")]),
+        ("链路层", "帧 frame", [(0.13, SEG["frame_h"], "帧头"), (0.15, SEG["ip"], "IP 头"),
+                              (0.22, SEG["tcp"], "TCP 头"), (0.45, SEG["data"], "数据"),
+                              (0.05, SEG["frame_h"], "")]),
+    ]
+
+    # ---- 发送端 ----
+    text(d, (A_x, top - 40), "发送端（主机 A）", size=25, bold=True)
+    d.line([A_x - 26, top + 20, A_x - 26, top + 4 * row_h - 40], fill=ACCENT, width=5)
+    d.polygon([(A_x - 44, top + 4 * row_h - 42), (A_x - 8, top + 4 * row_h - 42),
+               (A_x - 26, top + 4 * row_h - 16)], fill=ACCENT)
+    for i, (name, pdu, parts) in enumerate(rows):
+        y = top + i * row_h
+        text(d, (30, y + 6), name, size=21, bold=True)
+        text(d, (30, y + 36), pdu, size=14, fill=MUTED)
+        _bar(d, A_x, y, A_w, bar_h, parts)
+        if i < 3:
+            text(d, (A_x + A_w // 2, y + bar_h + 14), "↓ 加一个头", size=16, fill=ACCENT, anchor="ma")
+
+    # ---- 中间设备 ----
+    text(d, (Bx, top - 40), "网络（中间设备）", size=25, bold=True)
+    d.rounded_rectangle([Bx, top + 6, Bx + 330, top + 116], radius=12, fill=(241, 245, 249))
+    text(d, (Bx + 16, top + 22), "交换机（二层）", size=20, bold=True)
+    text(d, (Bx + 16, top + 52), "只看：帧头里的目的 MAC", size=16, fill=MUTED)
+    text(d, (Bx + 16, top + 78), "不拆 IP 头，看不到数据", size=16, fill=MUTED)
+
+    d.rounded_rectangle([Bx, top + 146, Bx + 330, top + 256], radius=12, fill=(241, 245, 249))
+    text(d, (Bx + 16, top + 162), "路由器（三层）", size=20, bold=True)
+    text(d, (Bx + 16, top + 192), "只看：IP 头里的目的 IP", size=16, fill=MUTED)
+    text(d, (Bx + 16, top + 218), "TTL 减 1，改写帧头再转发", size=16, fill=MUTED)
+
+    text(d, (Bx + 165, top + 286), "两台设备都「只剥到自己的层」就停下", size=17,
+         fill=ACCENT, anchor="ma")
+
+    # ---- 线缆上的样子 ----
+    y_wire = top + 400
+    text(d, (Bx + 165, y_wire - 32), "在线缆上（一个完整的帧）", size=17, fill=MUTED, anchor="ma")
+    _bar(d, Bx - 30, y_wire, 470, 66,
+         [(0.13, SEG["frame_h"], "帧头"), (0.15, SEG["ip"], "IP"), (0.2, SEG["tcp"], "TCP"),
+          (0.47, SEG["data"], "数据"), (0.05, SEG["frame_h"], "")])
+    text(d, (Bx + 165, y_wire + 82), "帧头 → 交换机 → 路由器（改帧头）→ 接收端",
+         size=17, fill=ACCENT, anchor="ma")
+
+    # ---- 接收端 ----
+    text(d, (C_x, top - 40), "接收端（主机 B）", size=25, bold=True)
+    d.line([C_x + C_w + 44, top + 4 * row_h - 40, C_x + C_w + 44, top + 20], fill=GREEN, width=5)
+    d.polygon([(C_x + C_w + 26, top + 18), (C_x + C_w + 62, top + 18),
+               (C_x + C_w + 44, top - 8)], fill=GREEN)
+    for i, (name, pdu, parts) in enumerate(rows):
+        y = top + i * row_h
+        text(d, (C_x + C_w + 62, y + 6), name, size=21, bold=True)
+        text(d, (C_x + C_w + 62, y + 36), pdu, size=15, fill=MUTED)
+        _bar(d, C_x, y, C_w, bar_h, parts)
+        if i < 3:
+            text(d, (C_x + C_w // 2, y + bar_h + 14), "↑ 剥掉一层头", size=16, fill=GREEN, anchor="ma")
+
+    text(d, (MARGIN, top + 4 * row_h + 40),
+         "同一份数据，发送端每往下一层就多套一层「信封」，接收端每往上一层就撕掉一层 —— "
+         "这就是「一层负责一件事」的物理含义：",
+         size=21, fill=MUTED)
+    text(d, (MARGIN, top + 4 * row_h + 74),
+         "每一层只读自己的头、只处理自己的那一段，再把剩下的整体交给上层。",
+         size=21, fill=MUTED)
+    footer(d, "图 1  封装与解封装：加头自上而下，剥头自下而上", 1800, h)
+    return save(img, out)
+
+
+def layer_matrix_figure(items: list, out: str) -> str:
+    """10 个场景 × 四层的标注矩阵。items=[(no, 场景短名, 应用, 传输, 网络, 链路)]"""
+    row_h = 74
+    h = HEADER + 60 + len(items) * row_h + 90 + FOOTER
+    img, d = canvas(1800, h)
+    header(d, "十个日常场景，各自落在哪一层",
+           "应用层写协议名、传输层写协议+端口、网络层写 IP 版本、链路层写介质 —— 四层缺一不可")
+
+    colx = [MARGIN, 130, 760, 1040, 1330, 1480]
+    heads = ["#", "场景（谁在什么时候做了什么）", "应用层", "传输层（协议·端口）", "网络层", "链路层"]
+    y0 = HEADER + 50
+    d.rectangle([MARGIN, y0, 1800 - MARGIN, y0 + 52], fill=INK)
+    for i, hd in enumerate(heads):
+        text(d, (colx[i] + (10 if i == 1 else 6), y0 + 12), hd, size=19, fill=WHITE, bold=True)
+
+    colors = [(37, 99, 235), (5, 150, 105), (245, 158, 11), (99, 102, 241)]
+    for r, (no, scen, app, trans, net, link) in enumerate(items):
+        y = y0 + 52 + r * row_h
+        d.rectangle([MARGIN, y, 1800 - MARGIN, y + row_h], fill=LIGHT if r % 2 == 0 else WHITE)
+        text(d, (colx[0] + 6, y + 18), f"{no:>2}", size=21, bold=True)
+        text(d, (colx[1] + 6, y + 18), scen, size=19)
+        for i, val in enumerate((app, trans, net, link)):
+            cx = colx[2 + i]
+            d.rounded_rectangle([cx + 4, y + 14, cx + (300 if i == 1 else 190) - 8, y + row_h - 14],
+                                radius=8, fill=colors[i])
+            text(d, (cx + 12, y + row_h // 2 - 1), val, size=17, fill=WHITE, bold=True, anchor="lm")
+
+    text(d, (MARGIN, y0 + 52 + len(items) * row_h + 26),
+         "10 个场景覆盖 TCP 9 个 / UDP 4 个（部分场景两者都有）、应用层协议 9 种，"
+         "避免「全是网页」这一类偏差。",
+         size=20, fill=MUTED)
+    footer(d, "图 2  10 个日常网络场景的分层标注", 1800, h)
+    return save(img, out)
+
+
+def packet_header_figure(pkt: dict, out: str) -> str:
+    """54 字节的帧：按层着色，标出每层起止偏移与关键字段。"""
+    h = HEADER + 60 + 200 + 100 + FOOTER
+    img, d = canvas(1800, h)
+    header(d, "一个 54 字节的 TCP SYN：三层头怎么套在一起",
+           f"{pkt['src']} → {pkt['dst']}，以太网头 14 + IP 头 20 + TCP 头 20")
+
+    frame = bytes.fromhex(pkt["hex"].replace(" ", ""))
+    top = HEADER + 60
+    cell, gap = 28, 2
+    x0 = MARGIN
+    layer_of = lambda i: (SEG["frame_h"] if i < 14 else SEG["ip"] if i < 34 else SEG["tcp"])
+    for i, b in enumerate(frame):
+        x = x0 + i * (cell + gap)
+        d.rectangle([x, top, x + cell, top + 46], fill=layer_of(i))
+        text(d, (x + cell // 2, top + 6), f"{b:02X}", size=13 if cell < 30 else 15,
+             fill=WHITE, bold=True, anchor="ma")
+
+    # 刻度：每 8 字节
+    for i in range(0, len(frame) + 1, 8):
+        x = x0 + i * (cell + gap)
+        d.line([x, top - 10, x, top - 2], fill=MUTED, width=2)
+        text(d, (x, top - 34), str(i), size=15, fill=MUTED, anchor="ma")
+
+    # 层括号
+    spans = [(0, 14, "以太网头 14 B", SEG["frame_h"]), (14, 34, "IP 头 20 B", SEG["ip"]),
+             (34, 54, "TCP 头 20 B", SEG["tcp"])]
+    yb = top + 62
+    for a, b, label, color in spans:
+        xa = x0 + a * (cell + gap)
+        xb = x0 + b * (cell + gap) - gap
+        d.line([xa, yb, xb, yb], fill=color, width=4)
+        d.line([xa, yb - 8, xa, yb], fill=color, width=4)
+        d.line([xb, yb - 8, xb, yb], fill=color, width=4)
+        text(d, ((xa + xb) // 2, yb + 8), label, size=18, fill=color, bold=True, anchor="ma")
+
+    # 关键字段
+    facts = [
+        ("目的 MAC", pkt["dst_mac"], "下一跳（网关）的网卡地址"),
+        ("源 / 目的 IP", f"{pkt['src'].split(':')[0]} → {pkt['dst'].split(':')[0]}", "网络层寻址，跨网段靠它"),
+        ("源 / 目的端口", pkt["src"].split(":")[1] + " → " + pkt["dst"].split(":")[1], "传输层定位到进程：443 = HTTPS"),
+        ("TTL", "128", "每过一台路由器减 1"),
+        ("校验和", "IP 头 0x2184 / TCP 0xC995", "反码和，回验结果应为 0"),
+    ]
+    y = yb + 60
+    for i, (k, v, note) in enumerate(facts):
+        x = MARGIN + (i % 2) * 880
+        yy = y + (i // 2) * 62
+        text(d, (x, yy), k, size=19, bold=True)
+        text(d, (x + 170, yy), v, size=19, fill=ACCENT, bold=True)
+        text(d, (x, yy + 26), note, size=16, fill=MUTED)
+
+    footer(d, "图 3  逐层展开：54 字节里，三层头的边界与关键字段", 1800, h)
+    return save(img, out)

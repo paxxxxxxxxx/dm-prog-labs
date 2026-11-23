@@ -1,0 +1,208 @@
+{
+  "frame_len": 54,
+  "hex": "3C 15 FB A9 72 2F DC 56 7B 6F 36 B1 08 00 45 00 00 28 1C 46 40 00 80 06 21 84 0A FA CE BD 9D 94 45 BA C3 EE 01 BB 12 34 56 78 00 00 00 00 50 02 FA F0 C9 95 00 00",
+  "src": "10.250.206.189:50158",
+  "dst": "157.148.69.186:443",
+  "src_mac": "DC-56-7B-6F-36-B1",
+  "dst_mac": "3C-15-FB-A9-72-2F",
+  "fields": [
+    {
+      "layer": "Frame / Ethernet II",
+      "field": "目的 MAC",
+      "offset": 0,
+      "len": 6,
+      "hex": "3C 15 FB A9 72 2F",
+      "value": "3C:15:FB:A9:72:2F",
+      "meaning": "下一跳（这里是网关）的网卡地址"
+    },
+    {
+      "layer": "Frame / Ethernet II",
+      "field": "源 MAC",
+      "offset": 6,
+      "len": 6,
+      "hex": "DC 56 7B 6F 36 B1",
+      "value": "DC:56:7B:6F:36:B1",
+      "meaning": "本机网卡地址"
+    },
+    {
+      "layer": "Frame / Ethernet II",
+      "field": "类型",
+      "offset": 12,
+      "len": 2,
+      "hex": "08 00",
+      "value": "0x0800",
+      "meaning": "0x0800 = 上层是 IPv4"
+    },
+    {
+      "layer": "IPv4",
+      "field": "版本 / 首部长度",
+      "offset": 14,
+      "len": 1,
+      "hex": "45",
+      "value": "版本 4，首部 5 字（×4 = 20 字节）",
+      "meaning": "版本号决定了这一层怎么解析"
+    },
+    {
+      "layer": "IPv4",
+      "field": "服务类型",
+      "offset": 15,
+      "len": 1,
+      "hex": "00",
+      "value": "0x00",
+      "meaning": "DSCP/ECN，本帧为 0（尽力而为）"
+    },
+    {
+      "layer": "IPv4",
+      "field": "总长度",
+      "offset": 16,
+      "len": 2,
+      "hex": "00 28",
+      "value": "40 字节",
+      "meaning": "IP 头 + TCP 头 + 数据，不含以太网头"
+    },
+    {
+      "layer": "IPv4",
+      "field": "标识",
+      "offset": 18,
+      "len": 2,
+      "hex": "1C 46",
+      "value": "0x1C46",
+      "meaning": "分片重组时用来认「同一批」"
+    },
+    {
+      "layer": "IPv4",
+      "field": "标志 / 片偏移",
+      "offset": 20,
+      "len": 2,
+      "hex": "40 00",
+      "value": "0x4000",
+      "meaning": "DF=1 表示不分片；片偏移 0 表示这是第一片"
+    },
+    {
+      "layer": "IPv4",
+      "field": "生存时间 TTL",
+      "offset": 22,
+      "len": 1,
+      "hex": "80",
+      "value": "128",
+      "meaning": "每过一个路由器减 1，减到 0 就丢弃 —— 防止环路"
+    },
+    {
+      "layer": "IPv4",
+      "field": "协议",
+      "offset": 23,
+      "len": 1,
+      "hex": "06",
+      "value": "6",
+      "meaning": "6 = TCP，17 = UDP，1 = ICMP"
+    },
+    {
+      "layer": "IPv4",
+      "field": "首部校验和",
+      "offset": 24,
+      "len": 2,
+      "hex": "21 84",
+      "value": "0x2184",
+      "meaning": "回验：把整段首部（含此字段）再求反码和 = 0x0000，为 0 说明首部正确"
+    },
+    {
+      "layer": "IPv4",
+      "field": "源 IP",
+      "offset": 26,
+      "len": 4,
+      "hex": "0A FA CE BD",
+      "value": "10.250.206.189",
+      "meaning": "发送方"
+    },
+    {
+      "layer": "IPv4",
+      "field": "目的 IP",
+      "offset": 30,
+      "len": 4,
+      "hex": "9D 94 45 BA",
+      "value": "157.148.69.186",
+      "meaning": "接收方"
+    },
+    {
+      "layer": "TCP",
+      "field": "源端口",
+      "offset": 34,
+      "len": 2,
+      "hex": "C3 EE",
+      "value": "50158",
+      "meaning": "本机浏览器/系统分配的临时端口"
+    },
+    {
+      "layer": "TCP",
+      "field": "目的端口",
+      "offset": 36,
+      "len": 2,
+      "hex": "01 BB",
+      "value": "443",
+      "meaning": "HTTPS"
+    },
+    {
+      "layer": "TCP",
+      "field": "序号 seq",
+      "offset": 38,
+      "len": 4,
+      "hex": "12 34 56 78",
+      "value": "305419896",
+      "meaning": "本段第一个字节的编号；SYN 会消耗 1 个序号"
+    },
+    {
+      "layer": "TCP",
+      "field": "确认号 ack",
+      "offset": 42,
+      "len": 4,
+      "hex": "00 00 00 00",
+      "value": "0",
+      "meaning": "只有 ACK 置位时才有意义；SYN 包为 0"
+    },
+    {
+      "layer": "TCP",
+      "field": "首部长度",
+      "offset": 46,
+      "len": 1,
+      "hex": "50",
+      "value": "20 字节",
+      "meaning": "TCP 头长度 = 数据偏移 × 4"
+    },
+    {
+      "layer": "TCP",
+      "field": "标志位",
+      "offset": 47,
+      "len": 1,
+      "hex": "02",
+      "value": "0x02（SYN）",
+      "meaning": "SYN = 请求建立连接"
+    },
+    {
+      "layer": "TCP",
+      "field": "窗口",
+      "offset": 48,
+      "len": 2,
+      "hex": "FA F0",
+      "value": "64240",
+      "meaning": "告诉对方「我还敢收多少字节」，流量控制就靠它"
+    },
+    {
+      "layer": "TCP",
+      "field": "校验和",
+      "offset": 50,
+      "len": 2,
+      "hex": "C9 95",
+      "value": "0xC995",
+      "meaning": "回验 = 0x0000（为 0 说明正确）；带伪首部，IP 地址被改也能发现"
+    },
+    {
+      "layer": "TCP",
+      "field": "紧急指针",
+      "offset": 52,
+      "len": 2,
+      "hex": "00 00",
+      "value": "0",
+      "meaning": "只有 URG 置位时才用"
+    }
+  ]
+}
