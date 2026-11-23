@@ -2,7 +2,8 @@
 
 2026 秋《数字媒体程序设计》五讲实验的**全部代码 + 数据 + 报告**。
 四个实验都是「先推导、再实现/验证、最后落到一张表或一段结论」，所以每个实验目录里
-都有**可运行的脚本**和**由脚本生成的报告**，报告里的每个数字都能在代码里找到出处。
+都有**可运行的脚本**；报告（docx/pdf）与插图只在本地生成、不进仓库，
+用 	ools/ 里的脚本随时可以重新产出，报告里的每个数字都能在代码里找到出处。
 
 ## 目录结构
 
@@ -11,14 +12,14 @@ dm-prog-labs/
 ├─ lab01_number_storage/          第 01 讲：数制转换与存储容量估算
 │  ├─ estimate.py                 计算 + 验证脚本（纯标准库）
 │  ├─ results.md / results.json   计算过程表与机器可读结果
-│  └─ report/                     报告 docx + pdf + 插图
+│  └─ results/                    脚本导出的结果
 ├─ lab02_ai_workstation/          第 02 讲：H3 与 Strata Qwen3.8 128B 主机配置单
 │  ├─ sizing.py                   显存/带宽/价格推导脚本
 │  └─ results.md / results.csv    三方案对照表
 ├─ lab03_matmul_layers/           第 03 讲：矩阵乘法四层实现（Verilog → 汇编 → C → CUDA）
 │  ├─ src/                        matmul.c / .s / .v / _tb.v / .cu / .mu 六份源码
 │  ├─ ref/ref_matmul.py           四路一致性核对 + 指令统计 + MUSA diff
-│  └─ report/                     报告 docx + pdf + 插图
+│  └─ results/                    脚本导出的结果
 ├─ lab05_network_layers/          第 05 讲：网络场景分层与协议标注
 │  ├─ scenarios.py                10 个场景的四层标注 + 六条规则自检
 │  ├─ verify.py                   ipconfig/arp/ping/nslookup/netstat 真实采集与解析
@@ -38,7 +39,7 @@ dm-prog-labs/
 │  ├─ docx_util.py                填模板用的 python-docx 封装
 │  ├─ build_lab1..4.py            把模板填成完整报告
 │  └─ export_pdf.py               docx → pdf（调用环境自带的 LibreOffice Kit）
-├─ templates/                     老师给的四份空白报告模板（保留原版式）
+├─ templates/                     老师给的五份空白报告模板（生成报告时要用）
 └─ README.md
 ```
 
@@ -167,6 +168,9 @@ IPv4 `10.250.206.189/16`、网关 `10.250.0.1`、DNS `10.248.98.30`、网卡 MAC
 
 ## 说明
 
-- 报告首页的**班级 / 姓名 / 学号 / 日期**已填好（数媒1班 / 刘纯 / 2025310570）。
-  要改的话改 `tools/build_lab*.py` 顶部的 `STUDENT` 常量，重新生成即可。
+- 报告首页的**班级 / 姓名 / 学号 / 日期**在 `tools/build_lab*.py` 顶部的 `STUDENT` 常量里设置，
+  重新生成 docx 时会自动填进模板（这些信息不写进仓库）。
 - 老师给的模板保留在 `templates/`，报告是在模板副本上填的，版式没有被改动。
+
+- 仓库里只放**代码、tools 脚本、results 结果数据与报告模板**；*/report/*.docx、*/report/*.pdf、
+  */report/figures/*.png 已在 .gitignore 里挡住，只在本地生成与保存。

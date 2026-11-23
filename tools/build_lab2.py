@@ -54,12 +54,12 @@ def pct(scheme: dict, key: str) -> str:
 # ---------------------------------------------------------------------------
 # 一、实验目的
 # ---------------------------------------------------------------------------
-STUDENT = {
-    "班级": "数媒1班",
-    "姓名": "刘纯",
-    "学号": "2025310570",
-    "日期": "2026.11.9",
-}
+# 报告首页要填的信息：放到本地 student.local.json（已在 .gitignore 里挡住，不会进仓库）
+STUDENT = {"班级": "", "姓名": "", "学号": "", "日期": ""}
+_local_student = os.path.join(ROOT, "student.local.json")
+if os.path.isfile(_local_student):
+    with open(_local_student, encoding="utf-8") as _f:
+        STUDENT.update(json.load(_f))
 
 GOALS = [
     "① 能从「Strata Qwen3.8 Flash 128B（INT4）长文对话 + MiniMax H3 视频生成」这两个需求"

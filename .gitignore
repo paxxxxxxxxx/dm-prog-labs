@@ -21,3 +21,6 @@ preview*/
 */report/*.docx
 */report/*.pdf
 */report/figures/*.png
+
+# 本地个人信息（姓名/学号），不要提交
+student.local.json
